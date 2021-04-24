@@ -1,15 +1,24 @@
-- [/api/routeguide.RouteGuide/GetFeature](#apirouteguiderouteguidegetfeature)
-- [/api/routeguide.RouteGuide/ListFeatures](#apirouteguiderouteguidelistfeatures)
-- [/api/routeguide.RouteGuide/RecordRoute](#apirouteguiderouteguiderecordroute)
-- [/api/routeguide.RouteGuide/RouteChat](#apirouteguiderouteguideroutechat)
+# RouteGuide
 
-## /api/routeguide.RouteGuide/GetFeature
+Interface exported by the server.  
+
+- [/routeguide.RouteGuide/GetFeature](#routeguiderouteguidegetfeature)
+- [/routeguide.RouteGuide/ListFeatures](#routeguiderouteguidelistfeatures)
+- [/routeguide.RouteGuide/RecordRoute](#routeguiderouteguiderecordroute)
+- [/routeguide.RouteGuide/RouteChat](#routeguiderouteguideroutechat)
+
+## /routeguide.RouteGuide/GetFeature
 
 A simple RPC.
 
+
+
 Obtains the feature at a given position.
 
+
+
 A feature with an empty name is returned if there's no feature at the given
+
 position.
 
 ### Method
@@ -36,13 +45,18 @@ POST
     },
 }
 ```
-## /api/routeguide.RouteGuide/ListFeatures
+## /routeguide.RouteGuide/ListFeatures
 
 A server-to-client streaming RPC.
 
+
+
 Obtains the Features available within the given Rectangle.  Results are
+
 streamed rather than returned at once (e.g. in a response message with a
+
 repeated field), as the rectangle may cover a large area and contain a
+
 huge number of features.
 
 ### Method
@@ -77,11 +91,14 @@ POST
     },
 }
 ```
-## /api/routeguide.RouteGuide/RecordRoute
+## /routeguide.RouteGuide/RecordRoute
 
 A client-to-server streaming RPC.
 
+
+
 Accepts a stream of Points on a route being traversed, returning a
+
 RouteSummary when traversal is completed.
 
 ### Method
@@ -109,11 +126,14 @@ POST
     elapsed_time: 0, // type:<int>
 }
 ```
-## /api/routeguide.RouteGuide/RouteChat
+## /routeguide.RouteGuide/RouteChat
 
 A Bidirectional streaming RPC.
 
+
+
 Accepts a stream of RouteNotes sent while a route is being traversed,
+
 while receiving other RouteNotes (e.g. from other users).
 
 ### Method

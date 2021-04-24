@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io"
 	"io/ioutil"
 	"log"
@@ -16,7 +17,13 @@ func init() {
 }
 
 func main() {
-	req := readGenRequest(os.Stdin)
+	bs, err := ioutil.ReadFile("./activty.bs")
+	if err != nil {
+		return
+	}
+	req := readGenRequest(bytes.NewReader(bs))
+
+	//req := readGenRequest(os.Stdin)
 
 	params, err := parseCommandLineParams(req.GetParameter())
 	if err != nil {
@@ -32,6 +39,7 @@ func main() {
 
 func readGenRequest(r io.Reader) *plugin.CodeGeneratorRequest {
 	data, err := ioutil.ReadAll(r)
+	//ioutil.WriteFile("activty.bs", data, 0644)
 	if err != nil {
 		Error(err, "reading input")
 	}

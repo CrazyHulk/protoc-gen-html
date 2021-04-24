@@ -1,0 +1,258 @@
+
+<h1 id='Activity'>data.Name</h1>
+<p>活动服务(非广义上的活动, 包括许多非核心业务)</p>
+<ul>
+	
+		<li><a href='#%2factivity.v0.Activity%2fS10Prize'>/activity.v0.Activity/S10Prize</a></li>
+	
+		<li><a href='#%2factivity.v0.Activity%2fIsRookie'>/activity.v0.Activity/IsRookie</a></li>
+	
+		<li><a href='#%2factivity.v0.Activity%2fSendRewards'>/activity.v0.Activity/SendRewards</a></li>
+	
+		<li><a href='#%2factivity.v0.Activity%2fOgvLanding'>/activity.v0.Activity/OgvLanding</a></li>
+	
+</ul>
+
+	<h2 id="/activity.v0.Activity/S10Prize">/activity.v0.Activity/S10Prize</h2>
+	<h3 id="method">Method</h3>
+	<p>POST</p>
+	<div class="row-fluid">
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="curl" onclick="sendReq()" req="cb0" resp="cr0" >CURL</button>
+	</div>
+	<div class="reqSourceCode" id="cb0"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cb0-0"><a href="#cb0-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cb0-1"><a href="#cb0-1" aria-hidden="true" tabindex="-1"></a>    mid: &#34;0&#34;, // type:&lt;string(int64)&gt;</span>
+	
+<span id="cb0-2"><a href="#cb0-2" aria-hidden="true" tabindex="-1"></a>    // 1-9折卡 2-8折卡 3-限免卡</span>
+	
+<span id="cb0-3"><a href="#cb0-3" aria-hidden="true" tabindex="-1"></a>    prize: 0, // type:&lt;int&gt;</span>
+	
+<span id="cb0-4"><a href="#cb0-4" aria-hidden="true" tabindex="-1"></a>    // 唯一识别符</span>
+	
+<span id="cb0-5"><a href="#cb0-5" aria-hidden="true" tabindex="-1"></a>    id: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cb0-6"><a href="#cb0-6" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<h3 id="reply">Reply</h3>
+	<div class="respSourceCode" id="cr0"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cr0-0"><a href="#cr0-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cr0-1"><a href="#cr0-1" aria-hidden="true" tabindex="-1"></a>    // 0-成功 601-兑换次数用完 602-兑换失败</span>
+	
+<span id="cr0-2"><a href="#cr0-2" aria-hidden="true" tabindex="-1"></a>    code: 0, // type:&lt;int&gt;</span>
+	
+<span id="cr0-3"><a href="#cr0-3" aria-hidden="true" tabindex="-1"></a>    msg: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr0-4"><a href="#cr0-4" aria-hidden="true" tabindex="-1"></a>    data: {},</span>
+	
+<span id="cr0-5"><a href="#cr0-5" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<li><a href='#%2factivity.v0.Activity%2fS10Prize'>/activity.v0.Activity/S10Prize</a></li>
+
+	<h2 id="/activity.v0.Activity/IsRookie">/activity.v0.Activity/IsRookie</h2>
+	<h3 id="method">Method</h3>
+	<p>POST</p>
+	<div class="row-fluid">
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="curl" onclick="sendReq()" req="cb1" resp="cr1" >CURL</button>
+	</div>
+	<div class="reqSourceCode" id="cb1"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cb1-0"><a href="#cb1-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    // 用户uid</span>
+	
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    uid: &#34;0&#34;, // type:&lt;string(int64)&gt;</span>
+	
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<h3 id="reply">Reply</h3>
+	<div class="respSourceCode" id="cr1"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cr1-0"><a href="#cr1-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cr1-1"><a href="#cr1-1" aria-hidden="true" tabindex="-1"></a>    // 当httpcode不是2xx时，code为string</span>
+	
+<span id="cr1-2"><a href="#cr1-2" aria-hidden="true" tabindex="-1"></a>    // 1-当前不在活动时间</span>
+	
+<span id="cr1-3"><a href="#cr1-3" aria-hidden="true" tabindex="-1"></a>    // 2-限流</span>
+	
+<span id="cr1-4"><a href="#cr1-4" aria-hidden="true" tabindex="-1"></a>    code: 0, // type:&lt;int&gt;</span>
+	
+<span id="cr1-5"><a href="#cr1-5" aria-hidden="true" tabindex="-1"></a>    msg: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr1-6"><a href="#cr1-6" aria-hidden="true" tabindex="-1"></a>    // 注意，当code不为0时，没有data字段，不要解析</span>
+	
+<span id="cr1-7"><a href="#cr1-7" aria-hidden="true" tabindex="-1"></a>    data: {</span>
+	
+<span id="cr1-8"><a href="#cr1-8" aria-hidden="true" tabindex="-1"></a>        // 1-是新人</span>
+	
+<span id="cr1-9"><a href="#cr1-9" aria-hidden="true" tabindex="-1"></a>        // 非1就不是新人</span>
+	
+<span id="cr1-10"><a href="#cr1-10" aria-hidden="true" tabindex="-1"></a>        rookie: 0, // type:&lt;int&gt;</span>
+	
+<span id="cr1-11"><a href="#cr1-11" aria-hidden="true" tabindex="-1"></a>    },</span>
+	
+<span id="cr1-12"><a href="#cr1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<li><a href='#%2factivity.v0.Activity%2fIsRookie'>/activity.v0.Activity/IsRookie</a></li>
+
+	<h2 id="/activity.v0.Activity/SendRewards">/activity.v0.Activity/SendRewards</h2>
+	<h3 id="method">Method</h3>
+	<p>POST</p>
+	<div class="row-fluid">
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="curl" onclick="sendReq()" req="cb2" resp="cr2" >CURL</button>
+	</div>
+	<div class="reqSourceCode" id="cb2"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cb2-0"><a href="#cb2-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    uid: &#34;0&#34;, // type:&lt;string(int64)&gt;</span>
+	
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    // @in:[1,2,3,4,5]</span>
+	
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    // 1-限免卡，只能新人发，先调用查询新人接口</span>
+	
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    // 2-发放打折卡，每次发一张</span>
+	
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    // 3-畅读卡月卡</span>
+	
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    // 4-畅读卡季卡</span>
+	
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    // 5-畅读卡年卡</span>
+	
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    type: 0, // type:&lt;int&gt;</span>
+	
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<h3 id="reply">Reply</h3>
+	<div class="respSourceCode" id="cr2"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cr2-0"><a href="#cr2-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cr2-1"><a href="#cr2-1" aria-hidden="true" tabindex="-1"></a>    // 当httpcode不是2xx时，code为string</span>
+	
+<span id="cr2-2"><a href="#cr2-2" aria-hidden="true" tabindex="-1"></a>    // 1-当前不在活动时间</span>
+	
+<span id="cr2-3"><a href="#cr2-3" aria-hidden="true" tabindex="-1"></a>    // 2-限流，下次重试</span>
+	
+<span id="cr2-4"><a href="#cr2-4" aria-hidden="true" tabindex="-1"></a>    // 3-同一个用户已发放过</span>
+	
+<span id="cr2-5"><a href="#cr2-5" aria-hidden="true" tabindex="-1"></a>    // 4-库存不足，漫画这边也会检查库存</span>
+	
+<span id="cr2-6"><a href="#cr2-6" aria-hidden="true" tabindex="-1"></a>    code: 0, // type:&lt;int&gt;</span>
+	
+<span id="cr2-7"><a href="#cr2-7" aria-hidden="true" tabindex="-1"></a>    msg: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr2-8"><a href="#cr2-8" aria-hidden="true" tabindex="-1"></a>    // 注意，当code不为0时，没有data字段，不要解析</span>
+	
+<span id="cr2-9"><a href="#cr2-9" aria-hidden="true" tabindex="-1"></a>    data: {},</span>
+	
+<span id="cr2-10"><a href="#cr2-10" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<li><a href='#%2factivity.v0.Activity%2fSendRewards'>/activity.v0.Activity/SendRewards</a></li>
+
+	<h2 id="/activity.v0.Activity/OgvLanding">/activity.v0.Activity/OgvLanding</h2>
+	<h3 id="method">Method</h3>
+	<p>POST</p>
+	<div class="row-fluid">
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="curl" onclick="sendReq()" req="cb3" resp="cr3" >CURL</button>
+	</div>
+	<div class="reqSourceCode" id="cb3"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cb3-0"><a href="#cb3-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    // 当前请求时间</span>
+	
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    actTime: 0, // type:&lt;int&gt;</span>
+	
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    // &#34;HOOK_SEASON&#34; 追番, &#34;THUMBS_UP&#34; 点赞</span>
+	
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    actType: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    // 用户mid</span>
+	
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    uid: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    // ComicID</span>
+	
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    seasonId: 0, // type:&lt;int&gt;</span>
+	
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    // 对应OGV这边配置的活动id</span>
+	
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    activityId: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<h3 id="reply">Reply</h3>
+	<div class="respSourceCode" id="cr3"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	
+<span id="cr3-0"><a href="#cr3-0" aria-hidden="true" tabindex="-1"></a>{</span>
+	
+<span id="cr3-1"><a href="#cr3-1" aria-hidden="true" tabindex="-1"></a>    code: 0, // type:&lt;int&gt;</span>
+	
+<span id="cr3-2"><a href="#cr3-2" aria-hidden="true" tabindex="-1"></a>    msg: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-3"><a href="#cr3-3" aria-hidden="true" tabindex="-1"></a>    data: {</span>
+	
+<span id="cr3-4"><a href="#cr3-4" aria-hidden="true" tabindex="-1"></a>        prizeContentDTO: {</span>
+	
+<span id="cr3-5"><a href="#cr3-5" aria-hidden="true" tabindex="-1"></a>            // 是否拿到奖品</span>
+	
+<span id="cr3-6"><a href="#cr3-6" aria-hidden="true" tabindex="-1"></a>            hitPrize: false, // type:&lt;bool&gt;</span>
+	
+<span id="cr3-7"><a href="#cr3-7" aria-hidden="true" tabindex="-1"></a>            // 奖品描述1</span>
+	
+<span id="cr3-8"><a href="#cr3-8" aria-hidden="true" tabindex="-1"></a>            prizeDesc1: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-9"><a href="#cr3-9" aria-hidden="true" tabindex="-1"></a>            // 奖品描述2</span>
+	
+<span id="cr3-10"><a href="#cr3-10" aria-hidden="true" tabindex="-1"></a>            prizeDesc2: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-11"><a href="#cr3-11" aria-hidden="true" tabindex="-1"></a>            // 奖品数量</span>
+	
+<span id="cr3-12"><a href="#cr3-12" aria-hidden="true" tabindex="-1"></a>            prizeDiscount: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-13"><a href="#cr3-13" aria-hidden="true" tabindex="-1"></a>            // 卡券结束时间</span>
+	
+<span id="cr3-14"><a href="#cr3-14" aria-hidden="true" tabindex="-1"></a>            prizeEndTime: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-15"><a href="#cr3-15" aria-hidden="true" tabindex="-1"></a>            // 奖品链接</span>
+	
+<span id="cr3-16"><a href="#cr3-16" aria-hidden="true" tabindex="-1"></a>            prizeLink: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-17"><a href="#cr3-17" aria-hidden="true" tabindex="-1"></a>            // 奖品类型</span>
+	
+<span id="cr3-18"><a href="#cr3-18" aria-hidden="true" tabindex="-1"></a>            prizeType: &#34;&#34;, // type:&lt;string&gt;</span>
+	
+<span id="cr3-19"><a href="#cr3-19" aria-hidden="true" tabindex="-1"></a>        },</span>
+	
+<span id="cr3-20"><a href="#cr3-20" aria-hidden="true" tabindex="-1"></a>    },</span>
+	
+<span id="cr3-21"><a href="#cr3-21" aria-hidden="true" tabindex="-1"></a>}</span>
+	
+ 	</div>
+	<li><a href='#%2factivity.v0.Activity%2fOgvLanding'>/activity.v0.Activity/OgvLanding</a></li>
+
+
+<script>
+	var data;
+	window.onload = function init() {
+  		console.log("init")
+		data = {"Apis":[{"Method":"POST","Path":"/activity.v0.Activity/S10Prize","Doc":"","Request":{"Name":"S10PrizeReq","Fields":[{"Name":"mid","Type":"TYPE_INT64","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"prize","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"1-9折卡 2-8折卡 3-限免卡","Label":1},{"Name":"id","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"唯一识别符","Label":1}],"Label":0,"Doc":""},"Reply":{"Name":"S10PrizeResp","Fields":[{"Name":"code","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"0-成功 601-兑换次数用完 602-兑换失败","Label":1},{"Name":"msg","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"data","Type":".activity.v0.EmptyData","KeyType":"","Note":"","Doc":"","Label":1}],"Label":0,"Doc":""},"Input":"{\nmid: \"0\", // type:\u003cstring(int64)\u003e\n// 1-9折卡 2-8折卡 3-限免卡\nprize: 0, // type:\u003cint\u003e\n// 唯一识别符\nid: \"\", // type:\u003cstring\u003e\n}","Output":"{\n// 0-成功 601-兑换次数用完 602-兑换失败\ncode: 0, // type:\u003cint\u003e\nmsg: \"\", // type:\u003cstring\u003e\ndata: {\n},\n}"},{"Method":"POST","Path":"/activity.v0.Activity/IsRookie","Doc":"拜年祭查询是否是漫画新人","Request":{"Name":"IsRookieReq","Fields":[{"Name":"uid","Type":"TYPE_INT64","KeyType":"","Note":"","Doc":"用户uid","Label":1}],"Label":0,"Doc":""},"Reply":{"Name":"IsRookieResp","Fields":[{"Name":"code","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"当httpcode不是2xx时，code为string\n1-当前不在活动时间\n2-限流","Label":1},{"Name":"msg","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"data","Type":".activity.v0.IsRookie","KeyType":"","Note":"","Doc":"注意，当code不为0时，没有data字段，不要解析","Label":1}],"Label":0,"Doc":""},"Input":"{\n// 用户uid\nuid: \"0\", // type:\u003cstring(int64)\u003e\n}","Output":"{\n// 当httpcode不是2xx时，code为string\n// 1-当前不在活动时间\n// 2-限流\ncode: 0, // type:\u003cint\u003e\nmsg: \"\", // type:\u003cstring\u003e\n// 注意，当code不为0时，没有data字段，不要解析\ndata: {\n// 1-是新人\n// 非1就不是新人\nrookie: 0, // type:\u003cint\u003e\n},\n}"},{"Method":"POST","Path":"/activity.v0.Activity/SendRewards","Doc":"拜年祭发放奖品","Request":{"Name":"SendRewardsReq","Fields":[{"Name":"uid","Type":"TYPE_INT64","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"type","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"@in:[1,2,3,4,5]\n1-限免卡，只能新人发，先调用查询新人接口\n2-发放打折卡，每次发一张\n3-畅读卡月卡\n4-畅读卡季卡\n5-畅读卡年卡","Label":1}],"Label":0,"Doc":""},"Reply":{"Name":"SendRewardsResp","Fields":[{"Name":"code","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"当httpcode不是2xx时，code为string\n1-当前不在活动时间\n2-限流，下次重试\n3-同一个用户已发放过\n4-库存不足，漫画这边也会检查库存","Label":1},{"Name":"msg","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"data","Type":".activity.v0.EmptyData","KeyType":"","Note":"","Doc":"注意，当code不为0时，没有data字段，不要解析","Label":1}],"Label":0,"Doc":""},"Input":"{\nuid: \"0\", // type:\u003cstring(int64)\u003e\n// @in:[1,2,3,4,5]\n// 1-限免卡，只能新人发，先调用查询新人接口\n// 2-发放打折卡，每次发一张\n// 3-畅读卡月卡\n// 4-畅读卡季卡\n// 5-畅读卡年卡\ntype: 0, // type:\u003cint\u003e\n}","Output":"{\n// 当httpcode不是2xx时，code为string\n// 1-当前不在活动时间\n// 2-限流，下次重试\n// 3-同一个用户已发放过\n// 4-库存不足，漫画这边也会检查库存\ncode: 0, // type:\u003cint\u003e\nmsg: \"\", // type:\u003cstring\u003e\n// 注意，当code不为0时，没有data字段，不要解析\ndata: {\n},\n}"},{"Method":"POST","Path":"/activity.v0.Activity/OgvLanding","Doc":"OGV引流合作落地","Request":{"Name":"OgvIndexReq","Fields":[{"Name":"actTime","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"当前请求时间","Label":1},{"Name":"actType","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"\"HOOK_SEASON\" 追番, \"THUMBS_UP\" 点赞","Label":1},{"Name":"uid","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"用户mid","Label":1},{"Name":"seasonId","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"ComicID","Label":1},{"Name":"activityId","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"对应OGV这边配置的活动id","Label":1}],"Label":0,"Doc":""},"Reply":{"Name":"OgvIndexResp","Fields":[{"Name":"code","Type":"TYPE_INT32","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"msg","Type":"TYPE_STRING","KeyType":"","Note":"","Doc":"","Label":1},{"Name":"data","Type":".activity.v0.OgvData","KeyType":"","Note":"","Doc":"","Label":1}],"Label":0,"Doc":""},"Input":"{\n// 当前请求时间\nactTime: 0, // type:\u003cint\u003e\n// \"HOOK_SEASON\" 追番, \"THUMBS_UP\" 点赞\nactType: \"\", // type:\u003cstring\u003e\n// 用户mid\nuid: \"\", // type:\u003cstring\u003e\n// ComicID\nseasonId: 0, // type:\u003cint\u003e\n// 对应OGV这边配置的活动id\nactivityId: \"\", // type:\u003cstring\u003e\n}","Output":"{\ncode: 0, // type:\u003cint\u003e\nmsg: \"\", // type:\u003cstring\u003e\ndata: {\nprizeContentDTO: {\n// 是否拿到奖品\nhitPrize: false, // type:\u003cbool\u003e\n// 奖品描述1\nprizeDesc1: \"\", // type:\u003cstring\u003e\n// 奖品描述2\nprizeDesc2: \"\", // type:\u003cstring\u003e\n// 奖品数量\nprizeDiscount: \"\", // type:\u003cstring\u003e\n// 卡券结束时间\nprizeEndTime: \"\", // type:\u003cstring\u003e\n// 奖品链接\nprizeLink: \"\", // type:\u003cstring\u003e\n// 奖品类型\nprizeType: \"\", // type:\u003cstring\u003e\n},\n},\n}"}],"Comments":{"Leading":"活动服务(非广义上的活动, 包括许多非核心业务)","Trailing":"","Detached":[]},"Name":"Activity"}
+	}
+	
+    function sendReq() {
+		data.Name = "card"
+        alert("hello world")
+    }
+</script>

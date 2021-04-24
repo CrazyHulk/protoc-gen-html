@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"strings"
 
 	"github.com/ditashi/jsbeautifier-go/jsbeautifier"
@@ -25,13 +26,13 @@ type twirp struct {
 	enums map[string]*protokit.EnumDescriptor
 
 	// List of all APIs
-	apis []*api
+	Apis []*api
 
-	// List of all service comments
-	comments *protokit.Comment
+	// List of all service Comments
+	Comments *protokit.Comment
 
-	// Service name
-	name string
+	// Service Name
+	Name string
 }
 
 func newGenerator(params commandLineParams) *twirp {
@@ -39,7 +40,7 @@ func newGenerator(params commandLineParams) *twirp {
 		params:   params,
 		messages: map[string]*message{},
 		enums:    map[string]*protokit.EnumDescriptor{},
-		apis:     []*api{},
+		Apis:     []*api{},
 		output:   bytes.NewBuffer(nil),
 	}
 
@@ -77,8 +78,8 @@ func (t *twirp) GenerateMarkdown(req *plugin.CodeGeneratorRequest, resp *plugin.
 	for _, d := range descriptors {
 		for _, sd := range d.GetServices() {
 			t.scanService(sd)
-			t.name = *sd.Name
-			for _, api := range t.apis {
+			t.Name = *sd.Name
+			for _, api := range t.Apis {
 				api.Input = t.generateJsDocForMessage(api.Request)
 				api.Output = t.generateJsDocForMessage(api.Reply)
 			}
@@ -211,8 +212,20 @@ type api struct {
 	Output  string
 }
 
+func (t api) GetInputBeautifyCodes() []string {
+	options := jsbeautifier.DefaultOptions()
+	code, _ := jsbeautifier.Beautify(&t.Input, options)
+	return strings.Split(code, "\n")
+}
+
+func (t api) GetOutputBeautifyCodes() []string {
+	options := jsbeautifier.DefaultOptions()
+	code, _ := jsbeautifier.Beautify(&t.Output, options)
+	return strings.Split(code, "\n")
+}
+
 func (t *twirp) scanService(d *protokit.ServiceDescriptor) {
-	t.comments = d.Comments
+	t.Comments = d.Comments
 	for _, md := range d.GetMethods() {
 		api := api{}
 
@@ -228,7 +241,7 @@ func (t *twirp) scanService(d *protokit.ServiceDescriptor) {
 		outputType := md.GetOutputType()[1:] // trim leading dot
 		api.Reply = t.messages[outputType]
 
-		t.apis = append(t.apis, &api)
+		t.Apis = append(t.Apis, &api)
 	}
 }
 
@@ -380,15 +393,17 @@ func (t *twirp) generateJsDocForMessage(m *message) string {
 }
 
 func (t *twirp) generateDoc() {
+	t.generateHTML()
+	return
 	options := jsbeautifier.DefaultOptions()
-	t.P("# ", t.name)
+	t.P("# ", t.Name)
 	t.P()
-	comments := strings.Split(t.comments.Leading, "\n")
+	comments := strings.Split(t.Comments.Leading, "\n")
 	for _, value := range comments {
 		t.P(value, "  ")
 	}
 	t.P()
-	for _, api := range t.apis {
+	for _, api := range t.Apis {
 		anchor := strings.Replace(api.Path, "/", "", -1)
 		anchor = strings.Replace(anchor, ".", "", -1)
 		anchor = strings.ToLower(anchor)
@@ -398,7 +413,7 @@ func (t *twirp) generateDoc() {
 
 	t.P()
 
-	for _, api := range t.apis {
+	for _, api := range t.Apis {
 		t.P("## ", api.Path)
 		t.P()
 		t.P(api.Doc)
@@ -420,3 +435,59 @@ func (t *twirp) generateDoc() {
 		t.P("```")
 	}
 }
+
+var temp = `
+<h1 id='{{.Name}}'>{{.Name}}</h1>
+<p>{{.Comments.Leading}}</p>
+<ul>
+	{{range .Apis}}
+		<li><a href='#{{.Path}}'>{{.Path}}</a></li>
+	{{end}}
+</ul>
+{{range $index, $v := .Apis}}
+	<h2 id="{{.Path}}">{{.Path}}</h2>
+	<h3 id="method">Method</h3>
+	<p>POST</p>
+	<div class="row-fluid">
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="curl" onclick="sendReq()" req="cb{{$index}}" resp="cr{{$index}}" >CURL</button>
+	</div>
+	<div class="reqSourceCode" id="cb{{$index}}"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	{{range $codeIndex, $v := .GetInputBeautifyCodes}}
+<span id="cb{{$index}}-{{$codeIndex}}"><a href="#cb{{$index}}-{{$codeIndex}}" aria-hidden="true" tabindex="-1"></a>{{.}}</span>
+	{{end}}
+ 	</div>
+	<h3 id="reply">Reply</h3>
+	<div class="respSourceCode" id="cr{{$index}}"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
+	{{range $codeIndex, $v := .GetOutputBeautifyCodes}}
+<span id="cr{{$index}}-{{$codeIndex}}"><a href="#cr{{$index}}-{{$codeIndex}}" aria-hidden="true" tabindex="-1"></a>{{.}}</span>
+	{{end}}
+ 	</div>
+	<li><a href='#{{.Path}}'>{{.Path}}</a></li>
+{{end}}
+
+<script>
+	var data;
+	window.onload = function init() {
+  		console.log("init")
+		data = {{.}}
+	}
+	
+    function sendReq() {
+		data.Name = "card"
+        alert("hello world")
+    }
+</script>
+`
+
+func (t *twirp) generateHTML() {
+		ht, err := template.New("doc").Parse(temp)
+		if err != nil {
+			return
+		}
+		//ht.Execute(t.output, t)
+		err = ht.ExecuteTemplate(t.output, "doc", t)
+		if err != nil {
+			panic(err)
+		}
+}
+

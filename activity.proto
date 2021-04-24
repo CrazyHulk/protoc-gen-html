@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package activity.v0;
+
+// 活动服务(非广义上的活动, 包括许多非核心业务)
+service Activity {
+    rpc S10Prize(S10PrizeReq) returns(S10PrizeResp);
+    // 拜年祭查询是否是漫画新人
+    rpc IsRookie(IsRookieReq) returns (IsRookieResp);
+    // 拜年祭发放奖品
+    rpc SendRewards(SendRewardsReq) returns (SendRewardsResp);
+    // OGV引流合作落地
+    rpc OgvLanding(OgvIndexReq) returns (OgvIndexResp);
+}
+
+message S10PrizeReq {
+    int64 mid = 1;
+    // 1-9折卡 2-8折卡 3-限免卡
+    int32 prize = 2;
+    // 唯一识别符
+    string id = 3;
+}
+
+message S10PrizeResp {
+    // 0-成功 601-兑换次数用完 602-兑换失败
+    int32 code = 1;
+    string msg = 2;
+    EmptyData data = 3;
+}
+
+message EmptyData {}
+
+message IsRookieReq {
+    // 用户uid
+    int64 uid = 1;
+}
+
+message IsRookieResp {
+    // 当httpcode不是2xx时，code为string
+    // 1-当前不在活动时间
+    // 2-限流
+    int32 code = 1;
+    string msg = 2;
+    // 注意，当code不为0时，没有data字段，不要解析
+    IsRookie data = 3;
+}
+
+message IsRookie {
+    // 1-是新人
+    // 非1就不是新人
+    int32 rookie = 1;
+}
+
+message SendRewardsReq {
+    int64 uid = 1;
+    // @in:[1,2,3,4,5]
+    // 1-限免卡，只能新人发，先调用查询新人接口
+    // 2-发放打折卡，每次发一张
+    // 3-畅读卡月卡
+    // 4-畅读卡季卡
+    // 5-畅读卡年卡
+    int32 type = 2;
+}
+
+message SendRewardsResp {
+    // 当httpcode不是2xx时，code为string
+    // 1-当前不在活动时间
+    // 2-限流，下次重试
+    // 3-同一个用户已发放过
+    // 4-库存不足，漫画这边也会检查库存
+    int32 code = 1;
+    string msg = 2;
+    // 注意，当code不为0时，没有data字段，不要解析
+    EmptyData data = 3;
+}
+
+message OgvIndexReq {
+    // 当前请求时间
+    int32 actTime = 1;
+    // "HOOK_SEASON" 追番, "THUMBS_UP" 点赞
+    string actType = 2;
+    // 用户mid
+    string uid = 3;
+    // ComicID
+    int32 seasonId = 4;
+    // 对应OGV这边配置的活动id
+    string activityId = 5;
+}
+
+message OgvIndexResp {
+    int32 code = 1;
+    string msg = 2;
+    OgvData data = 3;
+}
+
+message OgvData {
+    OgvIndexRespData prizeContentDTO = 1;
+}
+
+message OgvIndexRespData {
+    // 是否拿到奖品
+    bool hitPrize = 1;
+    // 奖品描述1
+    string prizeDesc1 = 2;
+    // 奖品描述2
+    string prizeDesc2 = 3;
+    // 奖品数量
+    string prizeDiscount = 4;
+    // 卡券结束时间
+    string prizeEndTime = 5;
+    // 奖品链接
+    string prizeLink = 6;
+    // 奖品类型
+    string prizeType = 7;
+}
