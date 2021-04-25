@@ -212,10 +212,22 @@ type api struct {
 	Output  string
 }
 
+func (t api) GetInputBeautifyCode() string {
+	options := jsbeautifier.DefaultOptions()
+	code, _ := jsbeautifier.Beautify(&t.Input, options)
+	return code
+}
+
 func (t api) GetInputBeautifyCodes() []string {
 	options := jsbeautifier.DefaultOptions()
 	code, _ := jsbeautifier.Beautify(&t.Input, options)
 	return strings.Split(code, "\n")
+}
+
+func (t api) GetOutputBeautifyCode() string {
+	options := jsbeautifier.DefaultOptions()
+	code, _ := jsbeautifier.Beautify(&t.Output, options)
+	return code
 }
 
 func (t api) GetOutputBeautifyCodes() []string {
@@ -367,7 +379,7 @@ func (t *twirp) generateJsDocForField(field field) string {
 	if disableDoc {
 		js += fmt.Sprintf("%s: %s,", field.Name, v)
 	} else {
-		js += fmt.Sprintf("%s: %s, // type:<%s>", field.Name, v, vt)
+		js += fmt.Sprintf("\"%s\": %s, // type:<%s>", field.Name, v, vt)
 		if field.Note != "" {
 			js = js + ", " + field.Note
 		}
@@ -383,8 +395,12 @@ func (t *twirp) generateJsDocForMessage(m *message) string {
 	var js string
 	js += "{\n"
 
-	for _, field := range m.Fields {
-		js += t.generateJsDocForField(field)
+	for i, field := range m.Fields {
+		tf := t.generateJsDocForField(field)
+		if i == len(m.Fields)-1 {
+			tf = strings.Replace(tf, ", //", " //", 1)
+		}
+		js += tf
 	}
 
 	js += "}"
@@ -437,6 +453,24 @@ func (t *twirp) generateDoc() {
 }
 
 var temp = `
+
+<script src="https://cdn.staticfile.org/jquery/3.5.0/jquery.js"></script>
+<!-- 引入CodeMirror核心文件 -->
+<script src="https://cdn.staticfile.org/codemirror/5.14.2/codemirror.min.js"></script>
+<script src="https://cdn.staticfile.org/codemirror/5.14.2/mode/javascript/javascript.min.js"></script>
+<script src="https://cdn.staticfile.org/codemirror/5.14.2/addon/fold/foldcode.min.js"></script>
+<script src="https://cdn.staticfile.org/codemirror/5.14.2/addon/fold/foldgutter.min.js"></script>
+<script src="https://cdn.staticfile.org/codemirror/5.14.2/addon/fold/brace-fold.min.js"></script>
+<script src="https://cdn.staticfile.org/codemirror/5.14.2/addon/fold/indent-fold.min.js"></script>
+<link rel="stylesheet" href="https://cdn.staticfile.org/codemirror/5.14.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/codemirror/5.14.2/theme/rubyblue.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/codemirror/5.14.2/addon/fold/foldgutter.min.css">
+<!-- bootstrap样式 -->
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="./doc.css">
+
 <h1 id='{{.Name}}'>{{.Name}}</h1>
 <p>{{.Comments.Leading}}</p>
 <ul>
@@ -449,20 +483,21 @@ var temp = `
 	<h3 id="method">Method</h3>
 	<p>POST</p>
 	<div class="row-fluid">
-	<h3 id="request" style="display:inline-block;">Request</h3><button class="curl" onclick="sendReq()" req="cb{{$index}}" resp="cr{{$index}}" >CURL</button>
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="sp-curl" onclick="sendReq(this)" req="reqArea{{$index}}" path={{.Path}} resp="respArea{{$index}}" >CURL</button>
 	</div>
+	<textarea id="reqArea{{$index}}" >{{.GetInputBeautifyCode}}</textarea>
 	<div class="reqSourceCode" id="cb{{$index}}"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
 	{{range $codeIndex, $v := .GetInputBeautifyCodes}}
 <span id="cb{{$index}}-{{$codeIndex}}"><a href="#cb{{$index}}-{{$codeIndex}}" aria-hidden="true" tabindex="-1"></a>{{.}}</span>
 	{{end}}
  	</div>
 	<h3 id="reply">Reply</h3>
+	<textarea id="respArea{{$index}}" style="display:none;">{{.GetInputBeautifyCode}}</textarea>
 	<div class="respSourceCode" id="cr{{$index}}"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
 	{{range $codeIndex, $v := .GetOutputBeautifyCodes}}
 <span id="cr{{$index}}-{{$codeIndex}}"><a href="#cr{{$index}}-{{$codeIndex}}" aria-hidden="true" tabindex="-1"></a>{{.}}</span>
 	{{end}}
  	</div>
-	<li><a href='#{{.Path}}'>{{.Path}}</a></li>
 {{end}}
 
 <script>
@@ -471,23 +506,29 @@ var temp = `
   		console.log("init")
 		data = {{.}}
 	}
+
 	
-    function sendReq() {
-		data.Name = "card"
-        alert("hello world")
-    }
+	function sendReq(obj) {
+		reqArea = document.getElementById(obj.getAttribute("req"));
+		reqBody = JSON.parse(reqArea.textContent.split("\n").map(x => x.replace(/\/\/.*/g, "")).join(""))
+		req = $.ajax({
+			type: "POST", 
+			url:"http://127.0.0.1:8080/twirp"+obj.getAttribute("path"),
+			data:reqBody
+		})
+		console.log(req.responseJSON)
+	}
 </script>
 `
 
 func (t *twirp) generateHTML() {
-		ht, err := template.New("doc").Parse(temp)
-		if err != nil {
-			return
-		}
-		//ht.Execute(t.output, t)
-		err = ht.ExecuteTemplate(t.output, "doc", t)
-		if err != nil {
-			panic(err)
-		}
+	ht, err := template.New("doc").Parse(temp)
+	if err != nil {
+		return
+	}
+	//ht.Execute(t.output, t)
+	err = ht.ExecuteTemplate(t.output, "doc", t)
+	if err != nil {
+		panic(err)
+	}
 }
-
