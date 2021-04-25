@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"io"
 	"io/ioutil"
 	"log"
@@ -17,13 +16,13 @@ func init() {
 }
 
 func main() {
-	bs, err := ioutil.ReadFile("./activty.bs")
-	if err != nil {
-		return
-	}
-	req := readGenRequest(bytes.NewReader(bs))
+	//bs, err := ioutil.ReadFile("./activty.bs")
+	//if err != nil {
+	//	return
+	//}
+	//req := readGenRequest(bytes.NewReader(bs))
 
-	//req := readGenRequest(os.Stdin)
+	req := readGenRequest(os.Stdin)
 
 	params, err := parseCommandLineParams(req.GetParameter())
 	if err != nil {

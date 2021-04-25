@@ -1,4 +1,4 @@
-module github.com/lvht/protoc-gen-markdown
+module github.com/CrazyHulk/protoc-gen-html
 
 go 1.13
 

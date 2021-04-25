@@ -1,4 +1,4 @@
-# protoc-gen-markdown
+# protoc-gen-html
 
 ## install
 
@@ -6,12 +6,12 @@
 go get github.com/lvht/protoc-gen-markdown
 ```
 
-## generate markdown
+## generate html
 
 ```bash
-protoc --markdown_out=. hello.proto
+protoc --html_out=. hello.proto
 # set path prefix to /api
-protoc --markdown_out=path_prefix=/api:. hello.proto
+protoc --html_out=path_prefix=/api:. hello.proto
 ```
 
 ## how to test 

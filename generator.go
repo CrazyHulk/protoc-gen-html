@@ -86,7 +86,7 @@ func (t *twirp) GenerateMarkdown(req *plugin.CodeGeneratorRequest, resp *plugin.
 
 			t.generateDoc()
 
-			name := strings.Replace(d.GetName(), ".proto", ".md", 1)
+			name := strings.Replace(d.GetName(), ".proto", ".html", 1)
 			resp.File = append(resp.File, &plugin.CodeGeneratorResponse_File{
 				Name:    proto.String(name),
 				Content: proto.String(t.output.String()),
@@ -455,6 +455,7 @@ func (t *twirp) generateDoc() {
 var temp = `
 <head>
 <link rel="stylesheet" href="./doc.css">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 
 <script src="https://cdn.staticfile.org/jquery/3.5.0/jquery.js"></script>
