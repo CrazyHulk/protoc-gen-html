@@ -453,6 +453,9 @@ func (t *twirp) generateDoc() {
 }
 
 var temp = `
+<head>
+<link rel="stylesheet" href="./doc.css">
+</head>
 
 <script src="https://cdn.staticfile.org/jquery/3.5.0/jquery.js"></script>
 <!-- 引入CodeMirror核心文件 -->
@@ -483,40 +486,69 @@ var temp = `
 	<h3 id="method">Method</h3>
 	<p>POST</p>
 	<div class="row-fluid">
-	<h3 id="request" style="display:inline-block;">Request</h3><button class="sp-curl" onclick="sendReq(this)" req="reqArea{{$index}}" path={{.Path}} resp="respArea{{$index}}" >CURL</button>
+	<h3 id="request" style="display:inline-block;">Request</h3><button class="sp-curl" onclick="sendReq(this)" req="reqArea{{$index}}" path={{.Path}} resp="respArea{{$index}}" aIndex={{$index}} >CURL</button>
 	</div>
 	<textarea id="reqArea{{$index}}" >{{.GetInputBeautifyCode}}</textarea>
-	<div class="reqSourceCode" id="cb{{$index}}"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
-	{{range $codeIndex, $v := .GetInputBeautifyCodes}}
-<span id="cb{{$index}}-{{$codeIndex}}"><a href="#cb{{$index}}-{{$codeIndex}}" aria-hidden="true" tabindex="-1"></a>{{.}}</span>
-	{{end}}
- 	</div>
 	<h3 id="reply">Reply</h3>
-	<textarea id="respArea{{$index}}" style="display:none;">{{.GetInputBeautifyCode}}</textarea>
-	<div class="respSourceCode" id="cr{{$index}}"><pre class="reqSourceCode javascript"><code class="reqSourceCode javascript">
-	{{range $codeIndex, $v := .GetOutputBeautifyCodes}}
-<span id="cr{{$index}}-{{$codeIndex}}"><a href="#cr{{$index}}-{{$codeIndex}}" aria-hidden="true" tabindex="-1"></a>{{.}}</span>
-	{{end}}
- 	</div>
+	<textarea id="respArea{{$index}}" >{{.GetOutputBeautifyCode}}</textarea>
 {{end}}
 
 <script>
+	var cmMap = {}
+	{{range $i, $k := .Apis}}
+		var editor = CodeMirror.fromTextArea(document.getElementById("reqArea"+ {{$i}}), {
+		  theme: 'rubyblue',
+		  mode: "javascript",
+		  lineNumbers: true,
+		  viewportMargin:Infinity,
+		  foldGutter: true,
+		  readOnly:false,
+		  gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+		});
+		var respCM = CodeMirror.fromTextArea(document.getElementById("respArea"+ {{$i}}), {
+		  theme: 'rubyblue',
+		  mode: "javascript",
+		  lineNumbers: true,
+		  viewportMargin:Infinity,
+		  foldGutter: true,
+		  autoRefresh: true,
+		  readOnly:false,
+		  gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+		});
+		cmMap[{{$i}}] = respCM
+	{{end}}
+
+
 	var data;
 	window.onload = function init() {
   		console.log("init")
 		data = {{.}}
 	}
 
-	
 	function sendReq(obj) {
 		reqArea = document.getElementById(obj.getAttribute("req"));
 		reqBody = JSON.parse(reqArea.textContent.split("\n").map(x => x.replace(/\/\/.*/g, "")).join(""))
-		req = $.ajax({
+	 	index = obj.getAttribute("aIndex")
+		resp = $.ajax({
 			type: "POST", 
 			url:"http://127.0.0.1:8080/twirp"+obj.getAttribute("path"),
-			data:reqBody
+			data:reqBody,
+			success: function (data, status) {
+				console.log(data, status)
+				respArea = document.getElementById(obj.getAttribute("resp"));
+				// respArea.textContent = resp.responseText 
+				// $('.CodeMirror').each(function(i, el){
+		 		// 	el.CodeMirror.refresh();
+				// });
+
+				console.log(index)
+				console.log(JSON.stringify(data, undefined, 4))
+				console.log(cmMap)
+				cmMap[index].setValue(JSON.stringify(data, undefined, 4))
+				cmMap[index].refresh
+			}
 		})
-		console.log(req.responseJSON)
+
 	}
 </script>
 `
