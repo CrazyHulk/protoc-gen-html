@@ -504,6 +504,9 @@ var temp = `
 		  foldGutter: true,
 		  readOnly:false,
 		  gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+		})
+		editor.on('change', e => {
+			document.getElementById("reqArea"+ {{$i}}).textContent = e.getValue()
 		});
 		var respCM = CodeMirror.fromTextArea(document.getElementById("respArea"+ {{$i}}), {
 		  theme: 'rubyblue',
@@ -532,7 +535,9 @@ var temp = `
 		resp = $.ajax({
 			type: "POST", 
 			url:"http://127.0.0.1:8080/twirp"+obj.getAttribute("path"),
-			data:reqBody,
+			data: JSON.stringify(reqBody),
+			contentType: 'application/json',
+			dataType: "json",
 			success: function (data, status) {
 				console.log(data, status)
 				respArea = document.getElementById(obj.getAttribute("resp"));
