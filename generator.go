@@ -489,15 +489,35 @@ var temp = `
 	<div class="row-fluid">
 	<h3 id="request" style="display:inline-block;">Request</h3><button class="sp-curl" onclick="sendReq(this)" req="reqArea{{$index}}" path={{.Path}} resp="respArea{{$index}}" aIndex={{$index}} >CURL</button>
 	</div>
-	<textarea id="reqArea{{$index}}" >{{.GetInputBeautifyCode}}</textarea>
+	<code id="reqCode{{$index}}" aIndex={{$index}} isReq=true>{{.GetInputBeautifyCode}}</code>
 	<h3 id="reply">Reply</h3>
-	<textarea id="respArea{{$index}}" >{{.GetOutputBeautifyCode}}</textarea>
+	<code id="respCode{{$index}}" aIndex={{$index}}>{{.GetOutputBeautifyCode}}</code>
 {{end}}
 
 <script>
+	var isInitMirrorCode = {}
 	var cmMap = {}
-	{{range $i, $k := .Apis}}
-		var editor = CodeMirror.fromTextArea(document.getElementById("reqArea"+ {{$i}}), {
+	$('code').click(function(){
+		var isReq = $(this).attr("isReq"); 
+		console.log(isReq)
+		var i = $(this).attr("aIndex");
+		var ele = this;
+		var str = $(ele).text();
+
+		areaID = ""
+		if (isReq) {
+			areaID = "reqArea" + i
+		} else {
+			areaID = "respArea" + i
+		}
+		if (isInitMirrorCode.hasOwnProperty(areaID)) {
+			return
+		}
+
+		$(ele).hide();
+		$(ele).after("<textarea id="+areaID+">"+str+"</textarea>");
+	
+		var editor = CodeMirror.fromTextArea(document.getElementById(areaID), {
 		  theme: 'rubyblue',
 		  mode: "javascript",
 		  lineNumbers: true,
@@ -505,24 +525,18 @@ var temp = `
 		  foldGutter: true,
 		  readOnly:false,
 		  gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-		})
-		editor.on('change', e => {
-			document.getElementById("reqArea"+ {{$i}}).textContent = e.getValue()
 		});
-		var respCM = CodeMirror.fromTextArea(document.getElementById("respArea"+ {{$i}}), {
-		  theme: 'rubyblue',
-		  mode: "javascript",
-		  lineNumbers: true,
-		  viewportMargin:Infinity,
-		  foldGutter: true,
-		  autoRefresh: true,
-		  readOnly:false,
-		  gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-		});
-		cmMap[{{$i}}] = respCM
-	{{end}}
-
-
+	
+		isInitMirrorCode[areaID] = true	
+		if (isReq) {
+		     	editor.on('change', e => {
+		     		document.getElementById("reqArea"+ i).textContent = e.getValue();
+		     	});
+		} else {
+		        cmMap[i] = editor;
+		}
+	});
+	
 	var data;
 	window.onload = function init() {
   		console.log("init")
@@ -530,9 +544,11 @@ var temp = `
 	}
 
 	function sendReq(obj) {
+		index = obj.getAttribute("aIndex")
+		document.getElementById("reqCode"+index).click();
+ 		document.getElementById("respCode"+index).click();
 		reqArea = document.getElementById(obj.getAttribute("req"));
 		reqBody = JSON.parse(reqArea.textContent.split("\n").map(x => x.replace(/\/\/.*/g, "")).join(""))
-	 	index = obj.getAttribute("aIndex")
 		resp = $.ajax({
 			type: "POST", 
 			url:"http://127.0.0.1:8080/twirp"+obj.getAttribute("path"),
@@ -540,13 +556,23 @@ var temp = `
 			contentType: 'application/json',
 			dataType: "json",
 			success: function (data, status) {
-				console.log(data, status)
+				console.log(data, status, obj)
 				respArea = document.getElementById(obj.getAttribute("resp"));
-				// respArea.textContent = resp.responseText 
-				// $('.CodeMirror').each(function(i, el){
-		 		// 	el.CodeMirror.refresh();
-				// });
 
+				// if (!cmMap.hasOwnProperty(index)) {
+				// 	var respCM = CodeMirror.fromTextArea(respArea, {
+				// 	  theme: 'rubyblue',
+				// 	  mode: "javascript",
+				// 	  lineNumbers: true,
+				// 	  viewportMargin:Infinity,
+				// 	  foldGutter: true,
+				// 	  autoRefresh: true,
+				// 	  readOnly:false,
+				// 	  gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+				// 	});
+				// 	cmMap[index] = respCM
+				// }
+				
 				console.log(index)
 				console.log(JSON.stringify(data, undefined, 4))
 				console.log(cmMap)
